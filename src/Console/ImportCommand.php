@@ -2,8 +2,8 @@
 
 namespace anerg2046\LaravelScoutElasticsearch\Console;
 
-use Illuminate\Console\Command;
 use anerg2046\LaravelScoutElasticsearch\ElasticsearchClientTrait;
+use Illuminate\Console\Command;
 
 class ImportCommand extends Command
 {
@@ -56,40 +56,39 @@ class ImportCommand extends Command
 
         // 分词器
         $analyzer = config('scout.elasticsearch.analyzer');
-        $columns = collect($columns)->except(['created_at', 'updated_at', 'deleted_at'])
-                ->transform(function ($v, $k) use ($analyzer, $primaryKey) {
-                if ($k == $primaryKey) {
-                    return [
-                        'type' => 'long'
-                    ];
-                } else {
-                    return [
-                        'type' => 'text',
-                        'analyzer' => $analyzer
-                    ];
-                }
-            });
+        $columns  = collect($columns)->transform(function ($v, $k) use ($analyzer, $primaryKey) {
+            if ($k == $primaryKey) {
+                return [
+                    'type' => 'long',
+                ];
+            } else {
+                return [
+                    'type'     => 'text',
+                    'analyzer' => $analyzer,
+                ];
+            }
+        });
 
         // 创建索引
         $type = $model->searchableAs();
         $data = [
-            'index' => config('scout.elasticsearch.prefix').$type
+            'index' => config('scout.elasticsearch.prefix') . $type,
         ];
 
         $client = $this->getElasticsearchClient();
 
         // 判断索引是否存在 如果不存在 则初始索引
-        if (! $client->indices()->exists($data)) {
+        if (!$client->indices()->exists($data)) {
             $settings = config('scout.elasticsearch.settings');
-            if (! empty($settings)) {
+            if (!empty($settings)) {
                 $data['body']['settings'] = $settings;
             }
             $client->indices()->create($data);
         }
 
-        if (! empty($columns)) {
+        if (!empty($columns)) {
             $data['body'] = [
-                '_source' => array('enabled' => true),
+                '_source'    => array('enabled' => true),
                 'properties' => $columns,
             ];
             $data['type'] = $type;
@@ -98,7 +97,7 @@ class ImportCommand extends Command
 
         // 导入数据
         $this->call('scout:import', [
-            'model' => $class
+            'model' => $class,
         ]);
     }
 }
