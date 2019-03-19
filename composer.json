@@ -1,0 +1,33 @@
+{
+    "name": "baijunyao/laravel-scout-elasticsearch",
+    "keywords": [
+        "laravel",
+        "scout",
+        "elasticsearch"
+    ],
+    "description": "Elasticsearch Driver for Laravel Scout",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Coeus",
+            "email": "r.anerg@gmail.com"
+        }
+    ],
+    "require": {
+        "laravel/scout": "~4.0",
+        "elasticsearch/elasticsearch": "~6.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "anerg2046\\LaravelScoutElasticsearch\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "anerg2046\\LaravelScoutElasticsearch\\ElasticsearchServiceProvider"
+            ]
+        }
+    }
+}
